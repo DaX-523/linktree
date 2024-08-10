@@ -7,11 +7,11 @@ export default function View() {
   const [userData, setUserData] = useState([]);
   const [userName, setUsername] = useState("");
   const { slug } = router.query;
+
   const fetchUserData = async () => {
     const bodyObject = {
       userID: slug,
     };
-    debugger;
     const response = await fetch(`${URI}/api/getlinks`, {
       method: "POST",
       headers: {
@@ -41,10 +41,11 @@ export default function View() {
   return (
     <div className="backggroundColor flex justify-center w-full h-full">
       <div className="flex justify-center flex-col items-center w-2/6">
-        <div class="circle">
-          <p class="circle-inner">AY</p>
+        <div className="circle cursor-pointer">
+          <p className="circle-inner">AY</p>
         </div>
         <div className="userName">@{userName?.data?.username}</div>
+        <div className="heading">Projects</div>
         {userData.length > 0
           ? userData.map((item, index) => {
               return (
@@ -60,7 +61,7 @@ export default function View() {
                   className="cursor-pointer w-3/6 bg-white min-h-12 text-cyan-500 mb-2 border rounded-2xl mt-2 font-sans text-lg font-normal pl-12 pr-12 pt-2 pb-2"
                 >
                   <div
-                    className="flex justify-center items-center bg-white font-medium font-sans"
+                    className="flex justify-center text-center items-center bg-white font-medium font-sans"
                     onClick={() => handlelink(item.link)}
                   >
                     {item.title}

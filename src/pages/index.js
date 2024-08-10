@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { URI } from "./source";
 import { Icons } from "@/components/icons";
@@ -14,6 +14,13 @@ export default function Home() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  useEffect(() => {
+    const user = window.localStorage.getItem("user");
+    console.log("User", user);
+    if (user) {
+      router.push(`/dashboard/${JSON.parse(user)}`);
+    }
+  }, [router]);
   const handleSignIn = async () => {
     const bodyObject = {
       username: email,
@@ -31,6 +38,7 @@ export default function Home() {
     console.log("Result of login", result);
     if (response.ok) {
       toast.success("Successfully Signed In!");
+      localStorage.setItem("user", JSON.stringify(result.data._id));
       setTimeout(() => {
         router.push(`/dashboard/${result.data._id}`);
       }, 1500);
@@ -92,7 +100,7 @@ export default function Home() {
             <span className="font-sans text-sm font-medium">Or With</span>
             <hr className="w-1/3 border-t border-gray-300 ml-3.5" />
           </div>
-          <div className="grid grid-cols-2 gap-4 md:mt-3 xl:mt-3">
+          <div className="grid grid-cols-2 gap-4 md:mt-3 text-black xl:mt-3">
             <div className="flex justify-center py-4 px-4 border-2 rounded-lg text-center text-base font-medium bg-white">
               {isGitHubLoading ? (
                 <Icons.spinner className="mr-2 h-4 w-4 mt-1 animate-spin" />

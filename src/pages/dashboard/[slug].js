@@ -10,6 +10,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import React, { useEffect, useState } from "react";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
 import DeleteIcon from "@mui/icons-material/Delete";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
@@ -68,7 +69,7 @@ function createData(name, calories, fat, carbs, protein) {
 }
 
 export default function Dashboard() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(false);
   const [linkData, setLinkData] = React.useState([]);
   const [title, setTitle] = React.useState("");
   const [link, setLink] = React.useState("");
@@ -85,6 +86,12 @@ export default function Dashboard() {
   useEffect(() => {
     console.log("Id", slug);
     if (typeof window !== "undefined") {
+      const user = window.localStorage.getItem("user");
+      console.log("User", user);
+      if (!user) {
+        toast.error("Please login to view this page");
+        router.push("/");
+      }
       const currentUrl = window.location.href;
       const replacedWord = currentUrl.replace("dashboard", "view");
       seturl(replacedWord);
@@ -104,7 +111,7 @@ export default function Dashboard() {
     });
     const result = await response.json();
     console.log("Result ", result);
-    setLinkData(result?.data.links);
+    setLinkData(result?.data?.links);
   };
 
   useEffect(() => {
@@ -172,7 +179,7 @@ export default function Dashboard() {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(false);
   };
 
   function copyToClipboard(text) {
@@ -212,42 +219,64 @@ export default function Dashboard() {
     }
   };
 
+  const handleSignOut = () => {
+    localStorage.removeItem("user");
+    toast.success("Successfully signed out!");
+    router.push("/");
+  };
+
   console.log(linkData);
 
   return (
     <div style={{ backgroundColor: "#fbfbfb" }}>
       <div className="flex justify-center items-center headerDiv">
-        <div className="w-5/6 border rounded-2xl min-h-8 xl:p-2 2xl:p-4 mt-10 bg-white shadow-[0_12px_41px_-11px_rgba(199,199,199)]">
-          <div className="flex">
+        <div className="w-5/6 border rounded-2xl min-h-8  2xl:p-4 mt-10 bg-white shadow-[0_12px_41px_-11px_rgba(199,199,199)]">
+          <div className="flex p-2 ">
             <Image
               src={logo}
               alt="logo"
-              style={{ height: "11%", width: "11%" }}
+              className="h-14 w-36 aspect-auto object-cover"
             />
-            <span className=" text-base cursor-pointer xl:mt-1.5 2xl:mt-4 font-sans text-slate-500 ml-10 mr-5">
-              Products
-            </span>
-            <span className="text-base cursor-pointer xl:mt-1.5 2xl:mt-4 font-sans text-slate-500 mr-5">
-              Use Cases
-            </span>
-            <span className="text-base cursor-pointer xl:mt-1.5 2xl:mt-4 font-sans text-slate-500 mr-5">
-              Blogs
-            </span>
-            <button className="bg-purple-200 text-sm text-purple-700 font-medium ml-auto rounded-lg xl:h-8 xl:pt-0 pb-0 pl-1 pr-1 2xl:pt-1 xl:pb-1 xl:pl-2 xl:pr-2 h-10 mt-2">
+
+            <button
+              onClick={handleSignOut}
+              className="bg-purple-200 text-sm text-purple-700 font-medium ml-auto rounded-lg xl:h-8 xl:pt-0 pb-0 pl-1 pr-1 2xl:pt-1 xl:pb-1 xl:pl-2 xl:pr-2 h-10 mt-2"
+            >
               Sign Out
             </button>
           </div>
         </div>
         <Toaster />
       </div>
-      <div class="text-[#333] rounded-xl font-[sans-serif] linkDiv">
+      <div className="text-[#333] rounded-xl font-[sans-serif] linkDiv">
         <div className="w-full flex items-center justify-center xl:pt-8  2xl:mt-10 2xl:pt-10">
-          <span class="mt-4 text-xl font-sans text-purple-700 font-medium">
+          <div className="mt-10 flex flex-col gap-2 md:gap-4 items-center md:flex-row text-xl font-sans text-purple-700 font-medium">
             Your link :
-            <span className="text-sm text-gray-600 font-sans font-medium ml-2 mr-5">
+            <span className="text-sm text-gray-600 font-sans font-medium mx-2">
               {" "}
               {url}
             </span>
+            <Tooltip title="View" onClick={() => router.push(url)}>
+              <IconButton
+                style={{
+                  fontSize: 13,
+                  paddingTop: 3,
+                  paddingBottom: 3,
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  borderRadius: 7,
+                  border: "1px solid #2c2c2c",
+                  color: "#2c2c2c",
+                  fontWeight: 700,
+                }}
+              >
+                View
+                <RemoveRedEyeIcon
+                  size="sm"
+                  style={{ fontSize: 17, color: "#2c2c2c", marginLeft: 7 }}
+                />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Copy" onClick={() => copyToClipboard(url)}>
               <IconButton
                 style={{
@@ -281,7 +310,6 @@ export default function Dashboard() {
                   border: "1px solid #8a53fe",
                   color: "#8a53fe",
                   fontWeight: 700,
-                  marginLeft: 17,
                 }}
               >
                 Generate QR Code
@@ -294,7 +322,7 @@ export default function Dashboard() {
             <Modal
               aria-labelledby="transition-modal-title"
               aria-describedby="transition-modal-description"
-              open={openQr}
+              open={openQr} // Ensure `open` is boolean
               onClose={handleCloseQR}
               closeAfterTransition
               slots={{ backdrop: Backdrop }}
@@ -329,11 +357,11 @@ export default function Dashboard() {
                 </Box>
               </Fade>
             </Modal>
-          </span>
+          </div>
         </div>
       </div>
       <div className="flex justify-center items-center liveCard">
-        <div className=" xl:h-content 2xl:h-content w-content bg-white border rounded-2xl shadow-[0_12px_41px_-11px_rgba(199,199,199)]">
+        <div className=" xl:h-content 2xl:h-content p-4 w-content bg-white border rounded-2xl shadow-[0_12px_41px_-11px_rgba(199,199,199)]">
           <div className="xl:mx-3 xl:mt-2 2xl:mx-6 2xl:mt-5">
             <div className="flex justify-between text-black xl:mt-3 2xl:mt-6">
               <div className="font-sans text-2xl font-medium subpixel-antialiased flex">
@@ -350,7 +378,7 @@ export default function Dashboard() {
                 </div>
               </div>
               <button
-                className="font-sans rounded-xl font-medium text-xs pl-3 pr-3 pt-0 pb-0  bg-black text-white "
+                className="font-sans rounded-xl font-medium text-xs px-3 py-0 mb-2 bg-black text-white "
                 onClick={handleOpenAddLinks}
               >
                 Add Link <LinkIcon style={{ fontSize: 20, marginLeft: 2 }} />
@@ -428,6 +456,7 @@ export default function Dashboard() {
                     >
                       Status
                     </StyledTableCell>
+                    <StyledTableCell align="left">Name</StyledTableCell>
                     <StyledTableCell align="left">Domain</StyledTableCell>
                     <StyledTableCell
                       align="center"
@@ -469,6 +498,11 @@ export default function Dashboard() {
                             <div className="font-sans mr-1">In Active</div>
                           </div>
                         )}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        <div className="font-sans mr-1 text-sm">
+                          {row?.title}
+                        </div>
                       </StyledTableCell>
                       <StyledTableCell align="left">
                         <a
