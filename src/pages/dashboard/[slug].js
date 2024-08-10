@@ -29,7 +29,7 @@ import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import toast, { Toaster } from "react-hot-toast";
-import { URI } from "../source";
+import { URI } from "../../source";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

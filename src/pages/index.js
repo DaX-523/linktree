@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { URI } from "./source";
+import { URI } from "../source";
 import { Icons } from "@/components/icons";
 
 const inter = Inter({ subsets: ["latin"] });

@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { URI } from "../source";
+import { URI } from "../../source";
 export default function Signup() {
   const router = useRouter();
   const [userName, setUserName] = useState("");

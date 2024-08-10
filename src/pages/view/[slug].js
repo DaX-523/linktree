@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { motion, sync, useCycle } from "framer-motion";
-import { URI } from "../source";
+import { URI } from "../../source";
 export default function View() {
   const router = useRouter();
   const [userData, setUserData] = useState([]);
