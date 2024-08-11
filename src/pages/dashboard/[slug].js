@@ -77,6 +77,7 @@ export default function Dashboard() {
   const [openQr, setOpenQr] = React.useState(false);
   const [openAddLink, setOpenAddLink] = React.useState(false);
   const [openConfirmModal, setOpenConfirmModal] = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [currentLink, setCurrentLink] = React.useState(null);
 
   const handleClick = (event, id) => {
@@ -90,6 +91,9 @@ export default function Dashboard() {
     setAnchorEl(null);
     // setCurrentLink(null); // Clear the active row ID
   };
+  const handleDeleteModalOpen = () => setOpenDeleteModal(true);
+
+  const handleDeleteModalClose = () => setOpenDeleteModal(false);
 
   const handleOpenConfirmModal = () => setOpenConfirmModal(true);
   const handleModalClose = () => {
@@ -152,6 +156,8 @@ export default function Dashboard() {
   };
 
   const handleCloseAddLinks = () => {
+    setTitle("");
+    setLink("");
     setOpenAddLink(false);
   };
 
@@ -258,7 +264,30 @@ export default function Dashboard() {
     if (response.ok) {
       toast.success("Successfully updated link");
     } else {
-      toast.error("Failed to add link");
+      toast.error("Failed to set link");
+    }
+  };
+  const handleLinkDelete = async (linkId) => {
+    const bodyObject = {
+      userId: slug,
+      linkId,
+    };
+    console.log(bodyObject, "dax");
+
+    const response = await fetch(`${URI}/api/deletelink`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyObject),
+    });
+    const result = await response.json();
+    console.log("Reuslt of adding", result);
+    setLinkData(result?.data?.links);
+    if (response.ok) {
+      toast.success("Successfully deleted link");
+    } else {
+      toast.error("Failed to delete link");
     }
   };
 
@@ -291,58 +320,10 @@ export default function Dashboard() {
         </div>
         <Toaster />
       </div>
-      {openConfirmModal && (
-        <Modal
-          className="text-black z-50"
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          open={openConfirmModal}
-          onClose={handleModalClose}
-          closeAfterTransition
-          slots={{ backdrop: Backdrop }}
-          slotProps={{
-            backdrop: {
-              timeout: 500,
-            },
-          }}
-        >
-          <Fade in={openConfirmModal}>
-            <Box sx={styleLink} className="border-0">
-              <Typography
-                alignContent={"center"}
-                id="transition-modal-title"
-                variant="h6"
-                component="h2"
-              >
-                Do you want to change the status of this link?
-              </Typography>
-              <div className="mt-5 flex justify-end gap-6 items-center">
-                <button
-                  className="font-medium mt-5 bg-purple-200 text-purple-700 border rounded-lg pt-1 pb-1 pr-2.5 pl-2.5 h-fit"
-                  onClick={() => {
-                    console.log("Current Link", currentLink);
-
-                    handleLinkStatus(currentLink);
-                    handleModalClose(); // Close the modal after action
-                  }}
-                >
-                  Yes
-                </button>
-                <button
-                  className="font-medium mt-5 text-purple-200 bg-purple-700 border rounded-lg pt-1 pb-1 pr-2.5 pl-2.5 h-fit"
-                  onClick={handleModalClose}
-                >
-                  No
-                </button>
-              </div>
-            </Box>
-          </Fade>
-        </Modal>
-      )}
 
       <div className="text-[#333] rounded-xl font-[sans-serif] linkDiv">
         <div className="w-full flex items-center justify-center xl:pt-8  2xl:mt-10 2xl:pt-10">
-          <div className="mt-10 flex flex-col gap-2 md:gap-4 items-center md:flex-row text-xl font-sans text-purple-700 font-medium">
+          <div className="mt-4 flex flex-col gap-2 md:gap-4 items-center md:flex-row text-xl font-sans text-purple-700 font-medium">
             Your link :
             <span className="text-sm text-gray-600 font-sans font-medium mx-2">
               {" "}
@@ -452,6 +433,102 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {openConfirmModal && (
+        <Modal
+          className="text-black z-50"
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          open={openConfirmModal}
+          onClose={handleModalClose}
+          closeAfterTransition
+          slots={{ backdrop: Backdrop }}
+          slotProps={{
+            backdrop: {
+              timeout: 500,
+            },
+          }}
+        >
+          <Fade in={openConfirmModal}>
+            <Box sx={styleLink} className="border-0">
+              <Typography
+                alignContent={"center"}
+                id="transition-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                Do you want to change the status of this link?
+              </Typography>
+              <div className="mt-5 flex justify-end gap-6 items-center">
+                <button
+                  className="font-medium mt-5 bg-purple-200 text-purple-700 border rounded-lg pt-1 pb-1 pr-2.5 pl-2.5 h-fit"
+                  onClick={() => {
+                    console.log("Current Link", currentLink);
+
+                    handleLinkStatus(currentLink);
+                    handleModalClose(); // Close the modal after action
+                  }}
+                >
+                  Yes
+                </button>
+                <button
+                  className="font-medium mt-5 text-purple-200 bg-purple-700 border rounded-lg pt-1 pb-1 pr-2.5 pl-2.5 h-fit"
+                  onClick={handleModalClose}
+                >
+                  No
+                </button>
+              </div>
+            </Box>
+          </Fade>
+        </Modal>
+      )}
+      {openDeleteModal && (
+        <Modal
+          className="text-black z-50"
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          open={openDeleteModal}
+          onClose={handleDeleteModalClose}
+          closeAfterTransition
+          slots={{ backdrop: Backdrop }}
+          slotProps={{
+            backdrop: {
+              timeout: 500,
+            },
+          }}
+        >
+          <Fade in={openDeleteModal}>
+            <Box sx={styleLink} className="border-0">
+              <Typography
+                alignContent={"center"}
+                id="transition-modal-title"
+                variant="h6"
+                component="h2"
+              >
+                Do you want to delete this link?
+              </Typography>
+              <div className="mt-5 flex justify-end gap-6 items-center">
+                <button
+                  className="font-medium mt-5 bg-purple-200 text-purple-700 border rounded-lg pt-1 pb-1 pr-2.5 pl-2.5 h-fit"
+                  onClick={() => {
+                    console.log("Current Link", currentLink);
+
+                    handleLinkDelete(currentLink);
+                    handleDeleteModalClose(); // Close the modal after action
+                  }}
+                >
+                  Delete
+                </button>
+                <button
+                  className="font-medium mt-5 text-purple-200 bg-purple-700 border rounded-lg pt-1 pb-1 pr-2.5 pl-2.5 h-fit"
+                  onClick={handleDeleteModalClose}
+                >
+                  No
+                </button>
+              </div>
+            </Box>
+          </Fade>
+        </Modal>
+      )}
       <div className="flex justify-center items-center liveCard">
         <div className=" xl:h-content 2xl:h-content p-4 w-content bg-white border rounded-2xl shadow-[0_12px_41px_-11px_rgba(199,199,199)]">
           <div className="xl:mx-3 xl:mt-2 2xl:mx-6 2xl:mt-5">
@@ -690,7 +767,12 @@ export default function Dashboard() {
                             <MenuItem
                               size="sm"
                               className="text-sm text-slate-500"
-                              onClick={handleClose}
+                              onClick={() => {
+                                handleOpenAddLinks();
+                                setTitle(row.title);
+                                setLink(row.link);
+                                handleClose();
+                              }}
                             >
                               <EditIcon className="mr-2 editOptions text-green-500" />{" "}
                               Edit
@@ -698,7 +780,10 @@ export default function Dashboard() {
                             <MenuItem
                               size="sm"
                               className="text-sm text-slate-500"
-                              onClick={handleClose}
+                              onClick={() => {
+                                handleDeleteModalOpen();
+                                handleClose();
+                              }}
                             >
                               <DeleteIcon className="mr-2 deleteOptions text-red-500" />{" "}
                               Delete
