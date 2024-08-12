@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-bl from-custom-gradient-start via-custom-gradient-middle to-custom-gradient-end">
       <div className="w-10/12 h-full sm:min-w-full md:min-w-80 md:min-h-screen lg:max-w-80 xl:max-w-80">
-        <div className="md:pt-2 xl:pt-3 2xl:pt-28">
+        <div className="md:pt-2 xl:pt-3 2xl:pt-12">
           <div className="font-sans font-semibold md:mt-2 xl:mt-3 text-4xl">
             Sign In
           </div>

@@ -11,8 +11,22 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "User not found" });
     }
     console.log("Data found", user);
+    let existingLink = user.links.find((elem) => {
+      console.log(link, elem.link, elem.link == link);
+
+      return elem.link == link;
+    });
+    console.log(existingLink);
+    if (!existingLink) {
+      // If the link does not exist, push a new link object to the links array
+      user.links.push({ title, link, status });
+    } else {
+      // If the link exists, update its properties
+      existingLink.title = title;
+      existingLink.status = status;
+    }
+
     // Push new link object to the links array
-    user.links.push({ title, link, status });
 
     // Save the updated user document
     await user.save();

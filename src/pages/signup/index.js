@@ -6,7 +6,12 @@ export default function Signup() {
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
     const bodyObject = {
       username: userName,
       password: password,
@@ -29,7 +34,7 @@ export default function Signup() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-bl from-custom-gradient-start via-custom-gradient-middle to-custom-gradient-end">
       <div className="w-10/12 h-full sm:min-w-full md:min-w-80 md:min-h-screen lg:max-w-80 xl:max-w-80">
-        <div className="md:pt-2 xl:pt-3">
+        <div className="md:pt-2 xl:pt-3 2xl:pt-12">
           <Toaster />
           <div className="font-sans font-semibold md:mt-2 xl:mt-5 text-4xl">
             Sign Up
@@ -62,7 +67,9 @@ export default function Signup() {
             Confirm Password
           </div>
           <input
+            onChange={(e) => setConfirmPassword(e.target.value)}
             type="password"
+            value={confirmPassword}
             className="block w-full rounded-lg border-0 py-3.5 pl-4 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             placeholder="Confirm Password"
           />
