@@ -200,14 +200,6 @@ export default function Dashboard() {
     p: 4,
   };
 
-  // const handleClick = (event, id) => {
-  //   setAnchorEl(event.currentTarget);
-  //   setCurrentLink(id);
-  // };
-  // const handleClose = () => {
-  //   setAnchorEl(false);
-  // };
-
   function copyToClipboard(text) {
     navigator.clipboard
       .writeText(text)
